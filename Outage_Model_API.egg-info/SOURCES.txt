@@ -1,3 +1,4 @@
+README.md
 setup.py
 Outage_Model_API.egg-info/PKG-INFO
 Outage_Model_API.egg-info/SOURCES.txt
@@ -8,4 +9,3 @@ Outage_Model_API.egg-info/top_level.txt
 outage_model/__init__.py
 outage_model/main.py
 outage_model/preprocess_cli.py
-outage_model/train_validate.py

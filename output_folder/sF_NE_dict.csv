@@ -1,6 +1,9 @@
-<<<<<<< HEAD
+minNodeelevation,19.135364532470703
+rangeNodeelevation,20.089393615722656
 minNodevegetation,0.0
 rangeNodevegetation,91.0
+minNodeflood_zone_num,2.0
+rangeNodeflood_zone_num,4.0
 minEdgevegetation,0.0
 rangeEdgevegetation,67.5
 minEdgelength,0.0001
@@ -8,22 +11,6 @@ rangeEdgelength,240.59412479822743
 minwspd,0.0
 rangewspd,90.7
 minprcp,0.0
-rangeprcp,90.7
-minProb,0.0019284633
-rangeProb,0.74477667
-=======
-meanNodeflood_zone_num,2.106637350556548
-rangeNodeflood_zone_num,4.0
-meanNodevegetation,12.047684485364849
-rangeNodevegetation,91.0
-meanEdgevegetation,11.706711594003576
-rangeEdgevegetation,67.5
-meanEdgelength,25.02758541539402
-rangeEdgelength,240.59412479822743
-meanwspd,34.006361990178874
-rangewspd,66.6
-meanprcp,34.006361990178874
-rangeprcp,66.6
-meanProb,0.2513432
-rangeProb,0.7459174
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
+rangeprcp,47.0
+minProb,3.2857437e-07
+rangeProb,0.63719755

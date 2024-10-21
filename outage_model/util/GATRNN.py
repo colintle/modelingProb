@@ -1,11 +1,11 @@
 import torch.nn as nn
 import torch
-from torch_geometric.nn import GATv2Conv
+from torch_geometric.nn import GATConv
 
 class GATRNN(nn.Module):
     def __init__(self, num_static_node_features, num_static_edge_features, num_weather_features, hidden_size):
         super().__init__()
-        self.gat_conv = GATv2Conv(num_static_node_features, hidden_size, edge_dim=num_static_edge_features)
+        self.gat_conv = GATConv(num_static_node_features, hidden_size, edge_dim=num_static_edge_features)
         self.lstm = nn.LSTM(hidden_size + num_weather_features, hidden_size)
         self.linear = nn.Linear(hidden_size, 1)
 

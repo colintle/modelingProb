@@ -1,15 +1,10 @@
 import numpy as np
 import torch
-<<<<<<< HEAD
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 import networkx as nx
 
 def normalize(val, mini, range):
-=======
-
-def normalize(val, mean, range):
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
     """Normalizes input feature data using the following transformation
     u_normalized = (u_original - u_mean) / u_range
 
@@ -25,11 +20,7 @@ def normalize(val, mean, range):
     Returns:
         float: Normalized feature data
     """
-<<<<<<< HEAD
     y = (val - mini) / range 
-=======
-    y = (val - mean) / range 
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
     return y
 
 # Function to find the max, mean, and minimum value of feature data passed
@@ -61,7 +52,6 @@ def normalizeDataset(datasets, sF, featureNames):
                     raw_data = np.copy(dataset[category][:,:,index].detach().numpy())
                 
                 if category == "node_static_features":
-<<<<<<< HEAD
                     min_key = f'minNode{feature}'
                     range_key = f'rangeNode{feature}'
                 elif category == "edge_static_features":
@@ -72,18 +62,6 @@ def normalizeDataset(datasets, sF, featureNames):
                     range_key = f'range{feature}'
 
                 normalize_data = normalize(raw_data, float(sF[min_key]), float(sF[range_key]))
-=======
-                    mean_key = f'meanNode{feature}'
-                    range_key = f'rangeNode{feature}'
-                elif category == "edge_static_features":
-                    mean_key = f'meanEdge{feature}'
-                    range_key = f'rangeEdge{feature}'
-                else:
-                    mean_key = f'mean{feature}'
-                    range_key = f'range{feature}'
-
-                normalize_data = normalize(raw_data, float(sF[mean_key]), float(sF[range_key]))
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
 
                 if category == 'node_static_features' or category == 'edge_static_features':
                     normalized_features[:, index] = normalize_data
@@ -95,25 +73,16 @@ def normalizeDataset(datasets, sF, featureNames):
 
         ##Target
         raw_data = np.copy(dataset["targets"].detach().numpy())
-<<<<<<< HEAD
         # normalized_data = normalize(raw_data, float(sF["meanProb"]), float(sF["rangeProb"]))
         processed["targets"] = torch.tensor(raw_data, dtype=torch.float)
         processed["coordinates"] = np.copy(dataset["coordinates"])
-=======
-        normalized_data = normalize(raw_data, float(sF["meanProb"]), float(sF["rangeProb"]))
-        processed["targets"] = torch.tensor(normalized_data, dtype=torch.float)
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
 
         transformed.append(processed)
     
     return transformed
 
 # GAT Model Training Function
-<<<<<<< HEAD
 def trainGAT(model, node_static_features, edge_static_features, node_dynamic_features, edge_index, targets, optimizer, criterion, rangeImpact):
-=======
-def trainGAT(model, node_static_features,edge_static_features, node_dynamic_features, edge_index, targets, optimizer, criterion, rangeImpact):
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
     # Set model into training model
     model.train()
     # Initialize the optimizer's gradient
@@ -123,11 +92,7 @@ def trainGAT(model, node_static_features,edge_static_features, node_dynamic_feat
     outputs = model(node_static_features, edge_static_features, node_dynamic_features, edge_index)
     
     # Calculate the loss of the measured vs estimated output
-<<<<<<< HEAD
     loss = criterion(outputs.view(-1, 1), targets.view(-1, 1))
-=======
-    loss = criterion(outputs.view(-1, 1)/rangeImpact, targets.view(-1, 1)/rangeImpact)
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
     
     # Compute the gradient of the loss with respect to all the model parameters
     loss.backward()
@@ -150,11 +115,7 @@ def validGAT(model, node_static_features,edge_static_features, node_dynamic_feat
         outputs = model(node_static_features, edge_static_features, node_dynamic_features, edge_index)
 
         # Calculate the loss of the measured vs estimated output
-<<<<<<< HEAD
         loss = criterion(outputs.view(-1, 1), targets.view(-1, 1))
-=======
-        loss = criterion(outputs.view(-1, 1)/rangeImpact, targets.view(-1, 1)/rangeImpact)
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
     
     # Return the loss
     return loss.item()
@@ -190,7 +151,7 @@ def trainValidate(model, optimizer, criterion, device, nDatasets_t, nDatasets_v,
             vloss = validGAT(model, node_static_feats, edge_static_feats, node_dynamic_feats, edge_index, targets, optimizer, criterion, float(sF['rangeProb']))
             validation_loss.append(vloss)
 
-        epochVloss = (sum(validation_loss) / len(validation_loss)) * validation_scale
+        epochVloss = (sum(validation_loss) / len(validation_loss))
         vLOSS.append(epochVloss)
 
         print('.', end ="", flush=True)
@@ -199,7 +160,6 @@ def trainValidate(model, optimizer, criterion, device, nDatasets_t, nDatasets_v,
 
     return tLOSS, vLOSS
 
-<<<<<<< HEAD
 def validateGAT(model, node_static_features,edge_static_features, node_dynamic_features, edge_index, targets, optimizer, criterion, rangeImpact):
     # Set the model into evaluation mode
     model.eval()
@@ -251,8 +211,5 @@ def plotTreeWithProb(tree, probabilities, title, pos):
     plt.title(title)
     # Display the plot
     plt.show()
-=======
-
->>>>>>> a0d345d6387e69626fb34582b3966d0ec46df2fd
 
 

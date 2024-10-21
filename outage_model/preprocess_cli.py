@@ -102,8 +102,13 @@ def preprocess(dataset_file, edge_static_features, node_static_features, weather
 
         for index, ts in enumerate(weather_features):
             for node_weather_feature in nodes_weather_features:
-                if ts in weather_features:
+                if ts in node_weather_feature:
                     data = pd.read_hdf(dataset_file, key=node_weather_feature)
+                    
+                    if data.isna().any().any():
+                        print("Warning: There are NaN values in the data!")
+                        print(node_weather_feature)
+    
                     nodeDynamicFeatures[:, :, index] = data
         
         nodeCoords = nL['coords'].to_numpy()

@@ -102,7 +102,6 @@ def train_validate(pkl_file, output_model_file, epochs, learning_rate, optimizer
        
         maxWeather, maxWeatherIndices = torch.max(node_dynamic_feats,1)
        
-
         newNodeStatic = torch.cat((node_static_feats,maxWeather), dim=1)
  
         output, vloss = validateGAT(model, node_static_feats, edge_static_feats, node_dynamic_feats, edge_index, targets, optimizer, criterion, float(results['rangeProb']))
