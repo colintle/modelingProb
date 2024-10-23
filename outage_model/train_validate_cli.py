@@ -52,8 +52,11 @@ def train_validate(pkl_file, output_model_file, epochs, learning_rate, optimizer
         'node_dynamic_features': datasets["node_dynamic_features"],
     }
 
-    nDatasets_t = normalizeDataset(datasets_t, results, feature_names)
-    nDatasets_v = normalizeDataset(datasets_v, results, feature_names)
+    # nDatasets_t = normalizeDataset(datasets_t, results, feature_names)
+    # nDatasets_v = normalizeDataset(datasets_v, results, feature_names)
+
+    nDatasets_t = datasets_t
+    nDatasets_v = datasets_v
 
     validation_scale = float(len(datasets['train'])) / float(len(datasets['validate']))
 
@@ -62,7 +65,7 @@ def train_validate(pkl_file, output_model_file, epochs, learning_rate, optimizer
     model = GATRNN(
         num_static_node_features=len(datasets["node_static_features"]), 
         num_static_edge_features=len(datasets["edge_static_features"]),
-        num_weather_features=len(datasets["node_dynamic_features"]), 
+        # num_weather_features=len(datasets["node_dynamic_features"]), 
         hidden_size=hidden_size
     )
     model.to(device)

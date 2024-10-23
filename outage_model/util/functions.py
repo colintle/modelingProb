@@ -89,8 +89,9 @@ def trainGAT(model, node_static_features, edge_static_features, node_dynamic_fea
     optimizer.zero_grad()
     
     # Pass data to model to get estimated output
-    outputs = model(node_static_features, edge_static_features, node_dynamic_features, edge_index)
-    
+    # outputs = model(node_static_features, edge_static_features, node_dynamic_features, edge_index)
+    outputs = model(node_static_features, edge_static_features, edge_index)
+
     # Calculate the loss of the measured vs estimated output
     loss = criterion(outputs.view(-1, 1), targets.view(-1, 1))
     
@@ -112,7 +113,9 @@ def validGAT(model, node_static_features,edge_static_features, node_dynamic_feat
     with torch.no_grad():
 
         # Pass the input data to the model to get estimated output
-        outputs = model(node_static_features, edge_static_features, node_dynamic_features, edge_index)
+        # outputs = model(node_static_features, edge_static_features, node_dynamic_features, edge_index)
+        outputs = model(node_static_features, edge_static_features, edge_index)
+
 
         # Calculate the loss of the measured vs estimated output
         loss = criterion(outputs.view(-1, 1), targets.view(-1, 1))
@@ -168,8 +171,9 @@ def validateGAT(model, node_static_features,edge_static_features, node_dynamic_f
     with torch.no_grad():
  
         # Pass the input data to the model to get estimated output
-        outputs = model(node_static_features, edge_static_features, node_dynamic_features, edge_index)
- 
+        # outputs = model(node_static_features, edge_static_features, node_dynamic_features, edge_index)
+        outputs = model(node_static_features, edge_static_features, edge_index)
+
         # Calculate the loss of the measured vs estimated output
         #loss = criterion(outputs.view(-1, 1)/rangeImpact, targets.view(-1, 1)/rangeImpact)
         loss = criterion(outputs.view(-1, 1), targets.view(-1, 1))
