@@ -92,101 +92,74 @@ def preprocess(dataset_file, edge_static_features, node_static_features, weather
         for index, feature in enumerate(node_static_features):
             nodeStaticFeatures[:, index] = nL[feature].to_numpy()
 
-        targets = nL['Probability'].to_numpy()
-
         if len(nodes_weather_features) == 0:
             continue
         
-        first = pd.read_hdf(dataset_file, key=nodes_weather_features[0])
-        nodeDynamicFeatures = np.zeros((len(nL), len(first.columns), len(nodes_weather_features)))
+        nodeDynamicFeatures = np.zeros((len(nL), len(nodes_weather_features)))
+        edgeDynamicFeatures = np.zeros((len(eL), len(edges_weather_features)))
 
         for index, ts in enumerate(weather_features):
             for node_weather_feature in nodes_weather_features:
                 if ts in node_weather_feature:
                     data = pd.read_hdf(dataset_file, key=node_weather_feature)
-                    
-                    if data.isna().any().any():
-                        print("Warning: There are NaN values in the data!")
-                        print(node_weather_feature)
-    
-                    nodeDynamicFeatures[:, :, index] = data
+                    nodeDynamicFeatures[:, index] = np.max(data,1)
+        
+        for index, ts in enumerate(weather_features):
+            for edge_weather_feature in edges_weather_features:
+                if ts in edge_weather_feature:
+                    data = pd.read_hdf(dataset_file, key=edge_weather_feature)
+                    edgeDynamicFeatures[:, index] = np.max(data,1)
         
         nodeCoords = nL['coords'].to_numpy()
-        # Convert the strings to tuples of floats
         coordinates = [tuple(map(float, coord.strip('()').split(', '))) for coord in nodeCoords]
- 
-        # Convert the list of tuples to a 2D numpy array
         nodeCoords = np.array(coordinates)
 
+        # [Vegetation, Elevation, FloodZone, Max Wind, Max Rain]
+        inputNode = np.concatenate([nodeStaticFeatures,nodeDynamicFeatures],1)
+        
+        # [Vegetation, Length, Max Wind, Max Rain]
+        inputEdge = np.concatenate([edgeStaticFeatures,edgeDynamicFeatures],1)
+
+        nodeDamage = nL['Unmodified Probability'].to_numpy()
+        edgeDamage = eL['Unmodified Probability'].to_numpy()
+        
         dataset = {
             'scenario': index,
-            'edge_index': torch.tensor(edgeList, dtype=torch.long),
-            'node_static_features': torch.tensor(nodeStaticFeatures),
-            'edge_static_features': torch.tensor(edgeStaticFeatures),
-            'node_dynamic_features': torch.tensor(nodeDynamicFeatures),
-            'targets': torch.tensor(targets, dtype=torch.float),
-            'coordinates': nodeCoords
+            'node_damage_input': inputNode,
+            'node_damage_output':nodeDamage,
+            'edge_damage_input':inputEdge,
+            'edge_damage_output':edgeDamage,
+            'nodeList':nL,
+            'edgeList':eL
         }
 
         datasets.append(dataset)
 
-    # Split datasets into training and validation sets
-    train_datasets, validate_datasets = train_test_split(datasets, test_size=0.2, random_state=42)
+    for i, dataset in enumerate(datasets):
+        if i == 0:
+            totalNodeInput = dataset['node_damage_input']
+            totalEdgeInput = dataset['edge_damage_input']
+            totalNodeOutput = dataset['node_damage_output']
+            totalEdgeOutput = dataset['edge_damage_output']
+        else:
+            totalNodeInput = np.concatenate([totalNodeInput,dataset['node_damage_input']],0)
+            totalEdgeInput = np.concatenate([totalEdgeInput,dataset['edge_damage_input']],0)
+            totalNodeOutput = np.concatenate([totalNodeOutput,dataset['node_damage_output']])
+            totalEdgeOutput = np.concatenate([totalEdgeOutput,dataset['edge_damage_output']])
+    
+    # NDI: Node Damage Input, NDO: Node Damage Output
+    NDI_train, NDI_test, NDO_train, NDO_test = train_test_split(totalNodeInput, totalNodeOutput, test_size=0.25, random_state=42)
+    EDI_train, EDI_test, EDO_train, EDO_test = train_test_split(totalEdgeInput, totalEdgeOutput, test_size=0.25, random_state=42)
 
-    # Aggregate data for statistics
-    nodeData = {f: [] for f in node_static_features}
-    edgeData = {f: [] for f in edge_static_features}
-    weatherData = {f: [] for f in weather_features}
-    probabilities = []
-
-    for key in datasets:
-        for index, feature in enumerate(node_static_features):
-            nodeData[feature].extend(key['node_static_features'][:, index].numpy().ravel())
-
-        for index, feature in enumerate(edge_static_features):
-            edgeData[feature].extend(key['edge_static_features'][:, index].numpy().ravel())
-
-        for index, feature in enumerate(weather_features):
-            weatherData[feature].extend(key["node_dynamic_features"][:, :, index].numpy().ravel())
-
-        probabilities.extend(key['targets'].numpy().ravel())
-
-    results = {}
-
-    for feature, data in nodeData.items():
-        mean_val, max_val, min_val = findStats(data)
-        results[f"minNode{feature}"] = min_val
-        results[f"rangeNode{feature}"] = max_val - min_val
-
-    for feature, data in edgeData.items():
-        mean_val, max_val, min_val = findStats(data)
-        results[f"minEdge{feature}"] = min_val
-        results[f"rangeEdge{feature}"] = max_val - min_val
-
-    for feature, data in weatherData.items():
-        mean_val, max_val, min_val = findStats(data)
-        results[f"min{feature}"] = min_val
-        results[f"range{feature}"] = max_val - min_val
-
-    mean_val, max_val, min_val = findStats(probabilities)
-    results["minProb"] = min_val
-    results["rangeProb"] = max_val - min_val
-
-    # Save statistics to CSV
-    csv_filename = os.path.join(output, "sF_NE_dict.csv")
-    with open(csv_filename, 'w', newline='') as csvfile:
-        writer = csv.writer(csvfile)
-        for key, val in results.items():
-            writer.writerow([key, val])
-
-    # Save datasets to pickle file
     datasetDict = {
-        'train': train_datasets,
-        'validate': validate_datasets,
-        'sF': results,
-        'edge_static_features': edge_static_features,
-        'node_static_features': node_static_features,
-        'node_dynamic_features': weather_features
+        "NDI_train": NDI_train,
+        "NDI_test": NDI_test,
+        "NDO_train": NDO_train,
+        "NDO_test": NDO_test,
+        "EDI_train": EDI_train,
+        "EDI_test": EDI_test,
+        "EDO_train": EDO_train,
+        "EDO_test": EDO_test
     }
 
     pkl_filename = os.path.join(output, "dataDict.pkl")
