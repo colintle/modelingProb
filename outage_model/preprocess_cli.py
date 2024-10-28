@@ -93,6 +93,7 @@ def preprocess(dataset_file, edge_static_features, node_static_features, weather
             nodeStaticFeatures[:, index] = nL[feature].to_numpy()
 
         targets = nL['Probability'].to_numpy()
+        nodeDamage = nL['Unmodified Probability'].to_numpy()
 
         if len(nodes_weather_features) == 0:
             continue
@@ -119,7 +120,7 @@ def preprocess(dataset_file, edge_static_features, node_static_features, weather
             'node_static_features': torch.tensor(nodeStaticFeatures),
             'edge_static_features': torch.tensor(edgeStaticFeatures),
             'node_dynamic_features': torch.tensor(nodeDynamicFeatures),
-            'targets': torch.tensor(targets, dtype=torch.float),
+            'targets': torch.tensor(nodeDamage, dtype=torch.float),
             'coordinates': nodeCoords
         }
 

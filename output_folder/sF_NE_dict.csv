@@ -1,5 +1,9 @@
+minNodeelevation,19.135364532470703
+rangeNodeelevation,20.089393615722656
 minNodevegetation,0.0
 rangeNodevegetation,91.0
+minNodeflood_zone_num,2.0
+rangeNodeflood_zone_num,4.0
 minEdgevegetation,0.0
 rangeEdgevegetation,67.5
 minEdgelength,0.0001
@@ -8,5 +12,5 @@ minwspd,0.0
 rangewspd,90.7
 minprcp,0.0
 rangeprcp,90.7
-minProb,0.0019284633
-rangeProb,0.74477667
+minProb,8.119756e-21
+rangeProb,0.100522846

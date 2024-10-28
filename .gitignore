@@ -1,1 +1,3 @@
 model_data
+output_folder\edge_damage_regressor.pkl
+output_folder\node_damage_regressor.pkl

@@ -73,8 +73,8 @@ def normalizeDataset(datasets, sF, featureNames):
 
         ##Target
         raw_data = np.copy(dataset["targets"].detach().numpy())
-        # normalized_data = normalize(raw_data, float(sF["meanProb"]), float(sF["rangeProb"]))
-        processed["targets"] = torch.tensor(raw_data, dtype=torch.float)
+        normalized_data = normalize(raw_data, float(sF["minProb"]), float(sF["rangeProb"]))
+        processed["targets"] = torch.tensor(normalized_data, dtype=torch.float)
         processed["coordinates"] = np.copy(dataset["coordinates"])
 
         transformed.append(processed)
@@ -156,7 +156,7 @@ def trainValidate(model, optimizer, criterion, device, nDatasets_t, nDatasets_v,
 
         print('.', end ="", flush=True)
         if (epoch % 100 == 0) or (epoch == epochs - 1):
-            print(f'\nEpoch {epoch} | Training Loss: {epochTloss:.3f} | Validation Loss: {epochVloss:.3f} | Train RMSE: {np.sqrt(epochTloss):.3f} | Valid RMSE: {np.sqrt(epochVloss):.3f}')
+            print(f'\nEpoch {epoch} | Training Loss: {epochTloss:.5f} | Validation Loss: {epochVloss:.5f} | Train RMSE: {np.sqrt(epochTloss):.5f} | Valid RMSE: {np.sqrt(epochVloss):.5f}')
 
     return tLOSS, vLOSS
 
