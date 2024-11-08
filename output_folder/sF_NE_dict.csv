@@ -4,6 +4,8 @@ minNodevegetation,0.0
 rangeNodevegetation,91.0
 minNodeflood_zone_num,2.0
 rangeNodeflood_zone_num,4.0
+minNodeDepth,0.0
+rangeNodeDepth,109.0
 minEdgevegetation,0.0
 rangeEdgevegetation,67.5
 minEdgelength,0.0001
