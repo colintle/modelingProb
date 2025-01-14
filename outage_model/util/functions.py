@@ -3,6 +3,7 @@ import torch
 import matplotlib.pyplot as plt
 from matplotlib.colors import LinearSegmentedColormap
 import networkx as nx
+import pickle
 
 def normalize(val, mini, range):
     """Normalizes input feature data using the following transformation
@@ -120,7 +121,7 @@ def validGAT(model, node_static_features,edge_static_features, node_dynamic_feat
     # Return the loss
     return loss.item()
 
-def trainValidate(model, optimizer, criterion, device, nDatasets_t, nDatasets_v, sF, epochs=1500,validation_scale=1.0):
+def trainValidate(model, optimizer, criterion, device, nDatasets_t, nDatasets_v, sF, epochs=1500,validation_scale=1.0, output_dict=None):
     tLOSS = []
     vLOSS = []
 

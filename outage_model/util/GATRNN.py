@@ -1,6 +1,8 @@
 import torch.nn as nn
 import torch
 from torch_geometric.nn import GATConv, BatchNorm
+
+torch.manual_seed(0)
  
 class GATRNN(nn.Module):
     def __init__(self, num_static_node_features, num_static_edge_features, num_weather_features, hidden_size, lstm_hidden_size=64, num_heads=8):
@@ -20,6 +22,7 @@ class GATRNN(nn.Module):
  
     def forward(self, node_static_features, edge_static_features, node_dynamic_features, edge_index):
         x1 = self.gat_conv1(node_static_features, edge_index.t(), edge_static_features)
+        # x1 = self.batch_norm1(x1)
         x1 = torch.relu(self.batch_norm1(x1))
         x1 = self.dropout(x1)
        
